@@ -1,0 +1,515 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>  
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+    <title>Hello World</title>  
+    <style type="text/css">  
+        body, html, #allmap  
+        {  
+            width: 100%;  
+            height: 100%;  
+            overflow: hidden;  
+            margin: 0;  
+        }  
+        #l-map  
+        {  
+            height: 100%;  
+            width: 78%;  
+            float: left;  
+            border-right: 2px solid #bcbcbc;  
+        }  
+        #r-result  
+        {  
+            height: 100%;  
+            width: 20%;  
+            float: left;  
+        }  
+    </style>  
+  
+  
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=UIK1XiRUPaoaSxXmKqrCZMrf"></script>  
+  
+  
+</head>  
+<body>  
+<div style="width:100%;position: absolute;z-index: 1;">
+	<button onclick="setLocation(116.405994,39.910065)">设置点</button>
+	<button onclick="clear()">清除点</button>
+	<button onclick="removeOverlay()">清除所有</button>
+	<button onclick="MoveNation()">移动国家</button>
+	<button onclick="AddProjectBoundary(116.387112, 39.920977,116.385243, 39.913063,116.394226, 39.917988,116.401772, 39.921364,116.41248, 39.927893)">项目网格</button>
+	<button onclick="AddEventOneMarker(116.405994,39.910065)">事件1点</button>
+	<button onclick="AddEventTwoMarker(116.405984,39.910065)">事件2点</button>
+	<button onclick="AddEventThreeMarker(116.405974,39.910065)">事件3点</button>
+	<button onclick="AddPeopleMarkerOther('116.405674,39.910065,人员')">人员</button>
+	<button onclick="AddPeopleMarkerTrack('116.405674,39.910065,保安')">保安</button>
+</div>
+    <div id="allmap">  
+    </div>  
+</body>  
+</html>  
+  
+  
+<script type="text/javascript">  
+  
+  //alert("Hello World");
+    var map = new BMap.Map("allmap");               // 创建Map实例
+    var carmaker;
+    var point = new BMap.Point(116.3, 39.9);    // 创建点坐标(经度,纬度)
+    map.centerAndZoom(point, 11);                   // 初始化地图,设置中心点坐标和地图大小级别
+    var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/icon_st.png", new BMap.Size(23, 25), {
+        offset: new BMap.Size(10, 25), // 指定定位位置  
+        mageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移  
+    });
+    var marke
+    var marker = new BMap.Marker(point, { icon: myIcon });
+    //var marker = new BMap.Marker(point);
+    map.addOverlay(marker);         // 给该坐标加一个红点标记
+ 
+    //var traffic = new BMap.TrafficLayer();         // 创建交通流量图层实例     
+    //map.addTileLayer(traffic);                     // 将图层添加到地图上   
+ 
+    map.addControl(new BMap.NavigationControl());   // 添加平移缩放控件
+    map.addControl(new BMap.ScaleControl());        // 添加比例尺控件
+    map.addControl(new BMap.OverviewMapControl());  //添加缩略地图控件
+ 
+    map.addControl(new BMap.MapTypeControl());      //添加地图类型控件
+    map.setCurrentCity("湖北");                     //设置地图显示的城市
+ 
+   map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+	var marker2;
+    function setLocation(x,y){//参数：经纬度
+		 map.removeOverlay(marker);
+         var point = new BMap.Point(x, y);   
+         map.centerAndZoom(point, 11);
+		 marker2=new BMap.Marker(point);
+         map.addOverlay(marker2); 
+    }
+	function clear(){
+		map.removeOverlay(marker2);
+	}
+
+	//清除覆盖物
+	function removeOverlay() {
+	    map.clearOverlays();
+	}
+
+    function MoveNation()
+     {
+         var point0 = new BMap.Point(116.374455, 39.775457);
+         map.centerAndZoom(point0, 5);
+     }
+ /**
+     * 获得图形的中心点
+     */
+    function getCenterPoint(path)
+    {
+        
+        var x = 0.0;
+        var y = 0.0;
+        for(var i=0;i<path.length;i++){
+             x=x+ parseFloat(path[i].lng);
+             y=y+ parseFloat(path[i].lat);
+        }
+        x=x/path.length;
+        y=y/path.length;
+        return new BMap.Point(x,y);
+        
+    }
+     function AddProjectBoundary(lng1, lat1, lng2, lat2, lng3, lat3, lng4, lat4, lng, lat)
+       {
+		   var arrayPoint=[];
+           var point = new BMap.Point(lng, lat);
+           var point1 = new BMap.Point(lng1, lat1);
+           var point2 = new BMap.Point(lng2, lat2);
+           var point3 = new BMap.Point(lng3, lat3);
+           var point4 = new BMap.Point(lng4, lat4);
+		   arrayPoint.push(point);
+		   arrayPoint.push(point1);
+		   arrayPoint.push(point2);
+		   arrayPoint.push(point3);
+		   arrayPoint.push(point4);
+           map.centerAndZoom(point, 17);
+		   // 创建多边形
+		    var polygon = new BMap.Polygon(arrayPoint, {
+		           strokeColor: 'red',
+		           strokeWeight: 2,
+		           strokeOpacity: 0.5
+		       });
+           map.addOverlay(polygon);
+		   
+           var myIcon = new BMap.Icon("https://api.map.baidu.com/img/markers.png",
+                new BMap.Size(23, 25), {
+                    offset: new BMap.Size(10, 25),
+                    imageOffset: new BMap.Size(0, 0)
+                });
+          var opts = {
+              position: getCenterPoint(arrayPoint), // 指定文本标注所在的地理位置
+          };
+          // 创建文本标注对象
+          var label = new BMap.Label('欢迎使用百度地图JSAPI GL版本', opts);
+          // 自定义文本标注样式
+          label.setStyle({
+              color: 'blue',
+              borderRadius: '5px',
+              borderColor: '#ccc',
+              padding: '10px',
+              fontSize: '16px',
+              height: '30px',
+              lineHeight: '30px',
+              fontFamily: '微软雅黑'
+          });
+          map.addOverlay(label);
+
+            //marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+
+            /*if (myGeo == null)
+                myGeo = new BMap.Geocoder();
+            myGeo.getLocation(point, function (res) {
+                if (res == null)
+                    addInfoWindow(marker, title, des);
+                else
+                    addInfoWindow(marker, res.address, res.business);
+            });*/
+
+           polygon.addEventListener("click",function(){
+				   console.log("Click Project")
+			});
+       }
+
+      function AddEventOneMarker(lng, lat)
+      {
+          var point = new BMap.Point(lng, lat);
+          var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/event1.png", new BMap.Size(23, 25), {
+              offset: new BMap.Size(10, 25), // 指定定位位置  
+              mageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移  
+          });
+          var marker = new BMap.Marker(point, { icon: myIcon });
+          map.addOverlay(marker);
+          marker.addEventListener("click",function(){
+				   console.log("点击事件")
+			});
+      }
+
+      function AddEventTwoMarker(lng, lat)
+      {
+          var point = new BMap.Point(lng, lat);
+          var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/event2.png", new BMap.Size(23, 25), {
+              offset: new BMap.Size(10, 25), // 指定定位位置  
+              mageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移  
+          });
+          var marker = new BMap.Marker(point, { icon: myIcon });
+          map.addOverlay(marker);
+          marker.addEventListener("click",function(){
+				   console.log("点击事件")
+			});
+      }
+
+      function AddEventThreeMarker(lng, lat)
+      {
+          var point = new BMap.Point(lng, lat);
+          var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/event3.png", new BMap.Size(23, 25), {
+              offset: new BMap.Size(10, 25), // 指定定位位置  
+              mageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移  
+          });
+          var marker = new BMap.Marker(point, { icon: myIcon });
+          map.addOverlay(marker);
+          marker.addEventListener("click",function(){
+				   console.log("点击事件")
+			});
+      }
+
+	function AddPeopleMarkerOther(a)
+      {
+          var arrs = new Array();
+          arrs = a.split(',');
+          var lng = arrs[0];
+          var lat = arrs[1];
+          var name = arrs[2];
+          var point = new BMap.Point(lng, lat);
+          var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/people.png", new BMap.Size(35, 35), {
+              offset: new BMap.Size(10, 25), // 指定定位位置  
+              mageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移  
+          });
+          var marker = new BMap.Marker(point, { icon: myIcon });
+          map.addOverlay(marker);
+          marker.addEventListener("click",function(){
+				   console.log("Click People" + name)
+			});
+      }
+
+      function AddPeopleMarkerTrack(a)
+      {
+          var arrs = new Array();
+          arrs = a.split(',');
+          var lng = arrs[0];
+          var lat = arrs[1];
+          var name = arrs[2];
+          var point = new BMap.Point(lng, lat);
+          map.centerAndZoom(point, 20);
+          var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/people.png", new BMap.Size(35, 35), {
+              offset: new BMap.Size(10, 25), // 指定定位位置  
+              mageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移  
+          });
+          var marker = new BMap.Marker(point, { icon: myIcon });
+          map.addOverlay(marker);
+          marker.addEventListener("click",function(){
+				   console.log("Click People" + name)
+			});
+      }
+
+    //移动到某一点
+	function MoveToPoint(lng, lat) {
+	    var p1 = new BMap.Point(lng, lat);
+	    //map.panTo(p1);
+	    map.centerAndZoom(p1, 20);
+	}
+
+	function addVechileMarker(lng, lat, index, title, des) {
+
+	    //标注图标
+	    var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/car.png",
+            new BMap.Size(23, 25), {
+                offset: new BMap.Size(10, 25),
+                imageOffset: new BMap.Size(0, 0 - index * 25)
+            });
+	    var point = new BMap.Point(lng, lat);
+	    var marker = new BMap.Marker(point, { icon: myIcon });
+	    map.addOverlay(marker);
+	    marker.addEventListener("click", function () {
+	        console.log("Click Car")
+	    });
+	    return marker;
+	}
+
+	function addVechileStartMarker(lng, lat, index, title, des) {
+	    map.clearOverlays();
+	    //标注图标
+	    var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/icon_st.png",
+            new BMap.Size(23, 25), {
+                offset: new BMap.Size(10, 25),
+                imageOffset: new BMap.Size(0, 0 - index * 25)
+            });
+
+	    var point = new BMap.Point(lng, lat);
+	    var marker = new BMap.Marker(point, { icon: myIcon });
+	    map.addOverlay(marker);
+	    return marker;
+	}
+
+	function addVechileTrackMarker(lng, lat, index, title, des) {
+	    //map.removeOverlay(carmaker);
+	    var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/car.png",
+            new BMap.Size(23, 25), {
+                offset: new BMap.Size(10, 25),
+                imageOffset: new BMap.Size(0, 0 - index * 25)
+            });
+
+	    var point = new BMap.Point(lng, lat);
+	    carmarker = new BMap.Marker(point, { icon: myIcon });
+	    map.addOverlay(carmarker);
+	    return carmarker;
+	}
+
+	function removeCarmaker(lng, lat)
+	{
+	    var allOverlay = map.getOverlays();
+	    for(var j = 0;j<allOverlay.length;j++) 
+	    {
+	        if (allOverlay[j].toString()=="[object Marker]" && allOverlay[j].getPosition().lng ==lng && allOverlay[j].getPosition().lat==lat )
+	        {
+	            map.removeOverlay(allOverlay[j]);
+	        }
+	    }
+	}
+
+	function addVechileEndMarker(lng, lat, index, title, des) {
+	    //map.clearOverlays();
+	    //标注图标
+	    var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/icon_en.png",
+            new BMap.Size(23, 25), {
+                offset: new BMap.Size(10, 25),
+                imageOffset: new BMap.Size(0, 0 - index * 25)
+            });
+
+	    var point = new BMap.Point(lng, lat);
+	    var marker = new BMap.Marker(point, { icon: myIcon });
+	    map.addOverlay(marker);
+	    return marker;
+	}
+
+	function MoveToTrack(lng, lat) {
+	    var pnn = new BMap.Point(lng, lat);
+	    //map.panTo(p2);
+	    map.centerAndZoom(pnn, 15);
+	}
+
+	function VechileTrack(lng1, lat1, lng2, lat2) {
+	    var pp1 = new BMap.Point(lng1, lat1);
+	    var pp2 = new BMap.Point(lng2, lat2);
+	    var polyline = new BMap.Polyline([pp1, pp2], { strokeColor: "blue", strokeWeight: 5, strokeOpacity: 0.5 });
+	    map.addOverlay(polyline);
+
+	    /*var carIcon = new BMap.Icon("https://api.map.baidu.com/img/markers.png",
+            new BMap.Size(23, 25), {
+                offset: new BMap.Size(10, 25),
+                imageOffset: new BMap.Size(0, 0 - index * 25)
+            });
+	    var marker = new BMap.Marker(pp2, { icon: carIcon });
+	    map.addOverlay(marker);
+	    return marker;*/
+	}
+
+    function MoveToCity(lng, lat)
+        {
+            var pn = new BMap.Point(lng, lat);
+            map.centerAndZoom(pn, 12);
+            console.log("点击测试4");
+        }
+
+// 添加标注
+        function addMarker(lng, lat, index, title, des) {
+
+            //标注图标
+            var myIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/event.png", new BMap.Size(25, 36), {
+              offset: new BMap.Size(10, 25), // 指定定位位置  
+              mageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移  
+          });
+            var point = new BMap.Point(lng, lat);
+            var marker = new BMap.Marker(point, { icon: myIcon });
+            map.addOverlay(marker);
+
+            //跳动的动画
+            //marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+
+            //根据坐标点，获取详细地址信息
+            if (myGeo == null)
+                myGeo = new BMap.Geocoder();
+            myGeo.getLocation(point, function (res) {
+                if (res == null)
+                    //设置点击详细信息
+                    addInfoWindow(marker, title, des);
+                else
+                    addInfoWindow(marker, res.address, res.business);
+            });
+            return marker;
+        }
+
+function openGetDistance()  
+{  
+ var myDis=new BMapLib.DistanceTool(map);//map?????????????}  
+ myDis.open();  
+} 
+
+var geoc = new BMap.Geocoder();
+//获取地理位置的函数
+function getLocation(point){
+　　geoc.getLocation(point, function(rs){
+　　　　var addComp = rs.addressComponents;
+　　　　var result = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+　　　　//$("#start").val(result);
+　　　　//$("#start_location").val(result);
+　　　　　　alert("当前的位置为:"+result);
+　　　　});
+　　}
+var labels=[];
+function createLabel(point,labelTitle,labelStyle){
+	if(labelTitle){
+		var opts = {
+		    position: point, // 指定文本标注所在的地理位置
+		};
+		// 创建文本标注对象
+		var label = new BMap.Label(labelTitle, opts);
+		// 自定义文本标注样式
+		label.setStyle({
+		    color: 'blue',
+		    borderRadius: '5px',
+		    borderColor: '#ccc',
+		    padding: '10px',
+		    fontSize: '16px',
+		    height: '30px',
+		    lineHeight: '30px',
+		    fontFamily: '微软雅黑'
+		});
+		if(labelStyle){
+			label.setStyle(labelStyle)
+		}
+		map.addOverlay(label);
+		labels.push(label);
+	}
+}
+//创建点覆盖物
+function createMarker(lng,lat,imagePath,callback){
+	// 创建Marker标注，使用小车图标
+	var pt = new BMap.Point(lng, lat);
+	var markerTemp;
+	// 图标
+	if(imagePath){
+		var iconTemp = new BMap.Icon(imagePath, new BMap.Size(52, 26));
+		markerTemp = new BMap.Marker(pt);
+	}else{
+		markerTemp = new BMap.Marker(pt, {
+		    icon: iconTemp
+		});
+	}
+	// 将标注添加到地图
+	map.addOverlay(markerTemp);
+	if(callback){
+		marker.addEventListener("click",callback());
+	}
+}
+    // 创建折线
+function createPolyLine(array,callback,labelTitle,labelStyle){
+var polyline = new BMap.Polyline(array, {
+	    strokeColor: 'red',
+	    strokeWeight: 2,
+	    strokeOpacity: 0.5
+	});
+		createLabel(getCenterPoint(array),labelTitle,labelStyle);
+	  map.addOverlay(polyline); // 增加折线
+	  if(callback){
+	  	polyline.addEventListener("click",callback());
+	  }
+	  var startIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/icon_st.png", new BMap.Size(23, 25), {
+	      offset: new BMap.Size(10, 25), // 指定定位位置  
+	  });
+	  var endIcon = new BMap.Icon("https://file.hyzhsafe.com/Icons/icon_st.png", new BMap.Size(23, 25), {
+	      offset: new BMap.Size(10, 25), // 指定定位位置  
+	  });
+	  var startMarker = new BMap.Marker(array[0], { icon: startIcon });
+	  var endMarker = new BMap.Marker(array[array.length-1], { icon: endIcon });
+	  //var marker = new BMap.Marker(point);
+		map.addOverlay(startMarker);
+		map.addOverlay(endMarker);
+	}
+	
+function createCircle(lng,lat,radius,callback){
+	var cirClePoint = new BMap.Point(lng, lat);
+	// 创建圆
+	var circle = new BMap.Circle(cirClePoint, 500, {
+	    strokeColor: 'red',
+	    strokeWeight: 2,
+	    strokeOpacity: 0.5
+	});
+	map.addOverlay(circle);
+	if(callback){
+		circle.addEventListener("click",callback());
+	}
+}
+//创建多边形
+function createPolygon(array,callback,labelTitle,labelStyle){
+	createLabel(getCenterPoint(array),labelTitle,labelStyle);
+	// 创建多边形
+	var polygon = new BMap.Polygon(array, {
+	    strokeColor: 'red',
+	    strokeWeight: 2,
+	    strokeOpacity: 0.5
+	});
+	map.addOverlay(circle);
+	if(callback){
+		polygon.addEventListener("click",callback());
+	}
+}
+</script>  
+<script type="text/javascript" src="DistanceTool_min.js"></script>  

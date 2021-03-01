@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>rtsp视频测试</title>
+	</head>
+	<body>
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+		    <title>360可用/title>
+		    <link href="http://vjs.zencdn.net/5.20.1/video-js.css" rel="stylesheet">
+		    <script src="http://vjs.zencdn.net/5.20.1/videojs-ie8.min.js"></script>
+		</head>
+		<body width="640px" height="360px">
+			
+ffmpeg -re  -rtsp_transport tcp -i "rtsp://aaa.com" -f flv -vcodec libx264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 "rtmp://12.13.14.156:8090/live/room"
+		  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="auto" width="640px" height="360px"  data-setup="{}">
+		    <source src="rtmp://localhost:1935/live/room" type="rtmp/flv">
+		    <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+		  </video>
+		  <script src="http://vjs.zencdn.net/5.20.1/video.js"></script>
+		</body>
+		</html>
+	</body>
+</html>
